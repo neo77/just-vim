@@ -1,0 +1,15 @@
+[submodule "bundle/perl-support.vim"]
+	path = bundle/perl-support.vim
+	url = git@github.com:neo77/perl-support.vim.git
+[submodule "bundle/perlomni.vim"]
+	path = bundle/perlomni.vim
+	url = git@github.com:c9s/perlomni.vim.git
+[submodule "bundle/perldoc-vim"]
+	path = bundle/perldoc-vim
+	url = git://github.com/hotchpotch/perldoc-vim
+[submodule "bundle/supertab"]
+	path = bundle/supertab
+	url = git@github.com:ervandew/supertab.git
+[submodule "bundle/taglist.vim"]
+	path = bundle/taglist.vim
+	url = git://github.com/vim-scripts/taglist.vim.git
