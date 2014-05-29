@@ -3,7 +3,7 @@
 	url = git@github.com:neo77/perl-support.vim.git
 [submodule "bundle/perlomni.vim"]
 	path = bundle/perlomni.vim
-	url = git@github.com:c9s/perlomni.vim.git
+	url = git@github.com:neo77/perlomni.vim.git
 [submodule "bundle/perldoc-vim"]
 	path = bundle/perldoc-vim
 	url = git://github.com/hotchpotch/perldoc-vim
