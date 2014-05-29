@@ -13,3 +13,18 @@
 [submodule "bundle/taglist.vim"]
 	path = bundle/taglist.vim
 	url = git://github.com/vim-scripts/taglist.vim.git
+[submodule "bundle/L9"]
+	path = bundle/L9
+	url = git@github.com:vim-scripts/L9.git
+[submodule "bundle/FuzzyFinder"]
+	path = bundle/FuzzyFinder
+	url = git@github.com:vim-scripts/FuzzyFinder.git
+[submodule "bundle/SWTC.vim"]
+	path = bundle/SWTC.vim
+	url = https://github.com/shinokada/SWTC.vim
+[submodule "bundle/vim-fugitive"]
+	path = bundle/vim-fugitive
+	url = git@github.com:tpope/vim-fugitive.git
+[submodule "bundle/vim-unimpaired"]
+	path = bundle/vim-unimpaired
+	url = git@github.com:tpope/vim-unimpaired.git
