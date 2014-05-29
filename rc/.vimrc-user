@@ -1,0 +1,11 @@
+" Begin .vimrc
+
+let g:AuthorName   = ''
+let g:AuthorRef    = ''
+let g:Company      = ''
+let g:Copyright    = '(c)  |YEAR|, |AUTHOR|'
+let g:Email        = ''
+let g:License      = ""
+let g:Organization      = ""
+
+

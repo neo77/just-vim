@@ -1,0 +1,293 @@
+"filetype vim
+
+
+" --------------------------
+"  Rolling up function (F2)
+" --------------------------
+function! RollUp()
+    exe "normal mr"
+    exe "normal :set nows\<ENTER>"
+    exe "normal gg"
+    while (1)
+        try
+            exe "normal /sub \<ENTER>"
+        catch /E385:/
+			exe "normal :echohl Question | echo 'All done :)' | echohl None"
+			exe "normal `r"
+            return
+        endtry
+		if getline('.') !~ ';\s*$'
+			exe "normal v%zf"
+		endif
+	endwhile
+    exe "normal mr"
+    exe "normal :set nows\<ENTER>"
+    exe "normal gg"
+    while (1)
+        try
+            exe "normal /method \<ENTER>"
+        catch /E385:/
+			exe "normal :echohl Question | echo 'All done :)' | echohl None"
+			exe "normal `r"
+            return
+        endtry
+		if getline('.') !~ ';\s*$'
+			exe "normal v%zf"
+		endif
+	endwhile
+endfunction
+
+
+
+
+" -----------------------------------
+"  dumping Record under cursor (F12)
+" -----------------------------------
+function! RecordDumper()
+	let head = getline(1)
+	let line = getline('.')
+
+	let head = strtrans(head)
+	let line = strtrans(line)
+	let head = substitute(head,"\'", "APOSMAKLOTA","g")
+	let line = substitute(line,"\'", "APOSMAKLOTA","g")
+	let head = substitute(head,"#", "APOSMAHASZ","g")
+	let line = substitute(line,"#", "APOSMAHASZ","g")
+	let head = substitute(head,"!", "APOSMAKRZYK","g")
+	let line = substitute(line,"!", "APOSMAKRZYK","g")
+	execute "!~/.vim/bin/rder.pl \'".head."\' \'".line."\'"
+	return ""
+endfunction
+
+
+
+
+" ########################################################### NEW ONES ------------------->
+
+" ----------------------
+"  PVcalc
+" ----------------------
+function! PVcalc()
+	let filename = expand("%:p")
+	let lin = getline('.')
+	if (lin =~ '^#\s*p')
+			let start = line('.') + 1
+			let end = search("^#\s*ep") - 1
+			let lines = getline(start, end)
+			let lin = join(lines, " ")
+	endif
+	let result = system("~/.vim/bin/pcalc.pl '".filename."' '".lin."'")
+	call append(".",result)
+	return
+endfunction
+
+" ----------------------
+"  Pmysql
+" ----------------------
+function! Pmysql()
+	let loginfirst = "'".getline('1')."' "
+	let loginsecond = "'".getline('2')."' "
+	let loginprev = "'".getline(line('.')-1)."' "
+	let current = getline('.')
+	let current = "'".substitute(current,"\'", "APOSMAKLOTA","g")."'"
+	let l = system("~/.vim/bin/pmysql.pl ".loginfirst.loginsecond.loginprev.current)
+	let e = substitute(l,'\%x00', '\r',"g")
+	call append(".",e)
+	return
+endfunction
+
+" -------------------
+"  CurrentFunction
+" -------------------
+function! CurrentFunction()
+	let match = search('^\s*sub ','bn', "1")
+    let source = 1
+	if (match == 0)
+	    let match = search('^newgroup','bn', "1")
+        let source = 0
+	    if (match == 0)
+        	return ""
+        endif
+	endif
+	let value = getline(match)
+    if (source == 1)
+        let value = substitute(value,"\s*{\s*", "","g")
+    	let value = substitute(value,"\\s*", "","g")
+    	let value = substitute(value,"sub", " current: ","g")
+        let value = value." "
+    else
+        let value = substitute(value,"[\"']);", "","g")
+    	let value = substitute(value,"newgroup([\"']", " current: ","g")
+    endif
+	return value
+endfunction
+
+" -------------------
+"  Filename / Package
+" -------------------
+function! Filename()
+    if (exists('b:fname')) 
+        return b:fname
+    endif    
+	let package = matchlist(getline(search('^\s*package','n', "25")), '^package\s*\(.*\)\s*;')
+    if (len(package) == 0)
+	    let package = matchlist(getline(search('^\s*class','n', "25")), '^class \v([a-zA-Z:]*)\s*') 
+    endif
+    if (len(package) == 0)
+	    let package = matchlist(getline(search('^\s*role','n', "25")), '^role \v([a-zA-Z:]*)\s*') 
+    endif
+   
+    if (len(package)>0)
+        let b:fname = package[1]
+    else
+        let b:fname = @%
+    endif
+    return b:fname
+endfunction
+
+" -------------------
+"  GitBranch 
+" -------------------
+function! GitBranch()
+    if (exists('b:branch')) 
+        return b:branch
+    endif    
+    let result = matchlist(system('cd '.expand("%:h").' && git branch | grep \*'), '\* \(_\?[a-zA-Z0-9\-\.]*\)')
+	let b:branch = len(result) ? result[1] : ''
+
+    return b:branch
+endfunction
+
+" -------------------
+"	InsertDumper
+" -------------------
+function! InsertDumper()
+    let variable = input("type variable: ")
+	let content = "\nuse Data::Dumper; # FIXME debuging ".variable."\nprint Dumper(".variable.");\n\n"
+	put =content
+endfunction
+
+" -------------------
+"	InsertDumper
+" -------------------
+function! Dup()
+    let content = "warn 'DUP-".g:dup."'".'."\n";'."\t# DEBUG-VIM\n"
+    let g:dup = g:dup + 1
+	put =content
+endfunction
+
+
+" -------------------
+"  OpenBrother
+" -------------------
+function! OpenBrother()
+	let s:path = expand("%:p")
+	let s:ext = expand("%:e")
+
+	if (s:ext == 't')
+        let s:path = substitute(s:path, '/t/','/lib/',"")
+        let s:path = substitute(s:path, '.t$', "", "")
+    elseif (s:ext == 'pm')
+        let s:path = substitute(s:path, '/lib/','/t/',"")
+		let s:path = s:path.".t"
+    end
+
+	let s:cmd = "vsplit ".s:path
+	execute s:cmd
+	redraw!
+endfunction
+
+" ================================================ Online Help
+
+" -------------
+"  GoogleDoc
+" -------------
+function! GoogleDoc()
+  let s:browser = "konqueror"
+  let s:wordUnderCursor = expand("<cword>")
+  let s:url = "http://www.google.pl/search?hl=pl&q=" . s:wordUnderCursor . "&site=&btnG=Szukaj+w+Google&lr=&aq=f&oq="
+  let s:cmd = "silent !" . s:browser . " " . s:url
+  execute s:cmd
+  redraw!
+endfunction
+
+" -------------
+"  WikiDoc
+" -------------
+function! WikiDoc()
+  let s:browser = "konqueror"
+  let s:wordUnderCursor = expand("<cword>")
+  let s:url = "http://pl.wikipedia.org/wiki/".s:wordUnderCursor
+  let s:cmd = "silent !" . s:browser . " " . s:url
+  execute s:cmd
+  redraw!
+endfunction
+
+" -------------
+"  OnlineDoc
+" -------------
+function! OnlineDoc()
+  if &ft =~ "cpp"
+    let s:urlTemplate = "http://doc.trolltech.com/4.1/%.html"
+  elseif &ft =~ "ruby"
+    let s:urlTemplate = "http://www.ruby-doc.org/core/classes/%.html"
+  elseif &ft =~ "perl"
+    let s:urlTemplate = "http://perldoc.perl.org/functions/%.html"
+  else
+    return
+  endif
+  let s:browser = "links"
+  let s:wordUnderCursor = expand("<cword>")
+  let s:url = substitute(s:urlTemplate, "%", s:wordUnderCursor, "g")
+  let s:cmd = "silent !" . s:browser . " " . s:url
+  execute s:cmd
+  redraw!
+endfunction
+
+" Online doc search.
+
+" mapping
+"inoremap    <buffer>  "  <ESC>call AutoBracket()<CR>i
+"inoremap    <buffer>  '  <ESC>call AutoBracket()<CR>i
+"inoremap    <buffer>  `  <ESC>call AutoBracket()<CR>i
+"inoremap    <buffer>  (  <ESC>call AutoBracket()<CR>i
+"inoremap    <buffer>  [  <ESC>call AutoBracket()<CR>i
+
+" -------------
+"  GoogleDoc
+" -------------
+function! AutoBracket()
+"  let s:signUnderCursor = expand("<cword>")
+"  let s:wordUnderCursor = expand("<cword>")
+
+"	let loginprev = "'".getline(line('.')-1)."' "
+	"let current = getline('.')
+ "   let e = '('.s:wordUnderCursor.')'
+"	call append(".",e)
+	return
+
+ " redraw!
+endfunction
+
+" -------------
+"  SwitchHls
+" -------------
+function! SwitchHls()
+    if &hls
+        set nohls
+    else
+        set hls
+    endif
+endfunction
+
+" -------------
+"  TidyIt
+" -------------
+function! TidyIt()
+    :%!perltidy -ce --continuation-indentation=4 -cti=0 -cpi=0 -l=350 --line-up-parentheses -pt=0 -sbt=1 -bt=0 -bbt=0 -nsbl -vt=0 -vtc=0 -sot -isbc -nolq -msc=4 -hsc -csc -csci=1 -cscp="+ end of:" -cscb -fsb='\#\<notidy' -fse='\#notidy\>' -bbs 
+    if (search('__ @_'))
+        :%s/__ @_/__@_/g
+    endif
+endfunction
+
+" vim: syntax=vim
