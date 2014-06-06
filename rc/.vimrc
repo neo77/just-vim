@@ -247,7 +247,7 @@ noremap <c-LEFT> <C-W><LEFT> :vertical resize<CR>^
 noremap <c-RIGHT> <C-W><RIGHT> :vertical resize<CR>^
 noremap <c-DOWN> <C-W><DOWN> :resize<CR>^
 noremap <c-UP> <C-W><UP> :resize<CR>^
-source $HOME/.vim/rc/.vimrc-user
+source $HOME/.vimrc-user
 "
 "------------------------------------------
 " FuzzyFinder
