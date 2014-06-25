@@ -161,6 +161,7 @@ autocmd BufNewFile,BufRead *.pm nmap <F12> :call OpenBrother()<CR>
 autocmd BufNewFile,BufRead *.t nmap <F12> :call OpenBrother()<CR>
 
 map <F3> :TlistToggle<CR>
+nmap <F4> :FufCoverageFile<CR>
 
 "---- leader based
 "inoremap <Leader>J <C-R>=JiraRefLink()<CR>
@@ -170,6 +171,13 @@ map <F3> :TlistToggle<CR>
 map <F5> <Leader>rr
 " syntax check
 map <F6> <Leader>rs
+
+" Replace variable in whole file
+map <F7> "zyiw:call UpdateVar()<CR>
+function UpdateVar()
+    let s:var = input("Replace to: ", @z)
+    exe "%s/".@z."/".s:var."/c"
+endfunction
 
 imap ~d <ESC>^iwarn Data::Dumper->Dump([\<ESC>llyw$a], ['<ESC>pa']);<ESC>
 imap ~v <ESC>v?><CR>ly?\$<CR>imy $o_<ESC>pa = <ESC>$a;<CR>

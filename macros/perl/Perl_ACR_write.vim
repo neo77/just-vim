@@ -8,6 +8,10 @@ let dict = winsaveview()
 let path = expand("%:p")
 
 
+if (search('onSave: TidyIt'))
+    call TidyIt()
+endif
+
 if (search('Owner: Pawel Guspiel') || search('Owner: Neo') || search('neo@cpan.org'))
     call TidyIt()
 endif
