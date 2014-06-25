@@ -176,12 +176,19 @@ map <F6> <Leader>rs
 map <F7> "zyiw:call UpdateVar()<CR>
 function UpdateVar()
     let s:var = input("Replace to: ", @z)
-    let s:myline  = search('my\s*.'.@z,'bW')
+    if (search('}','bW')) 
+        exe "normal \%" 
+    endif    
+    let s:myline  = search('my\s*.'.@z."",'bW')
     let s:firstline  = search('{','bW')
-    :exe "normal \%" 
-    let s:lastline = line('.')
+    if (s:firstline == 0) 
+        let s:lastline = line('$') 
+    else
+        exe "normal \%" 
+        let s:lastline = line('.')
+    endif
 
-    exe s:myline.",".s:lastline."s/".@z."/".s:var."/cg"
+    exe s:myline.",".s:lastline."s/".@z.'\>'."/".s:var."/cg"
 endfunction
 
 imap ~d <ESC>^iwarn Data::Dumper->Dump([\<ESC>llyw$a], ['<ESC>pa']);<ESC>
