@@ -258,7 +258,6 @@ autocmd FileType *
 \   call SuperTabSetDefaultCompletionType("<c-n>") |
 \ endif
 let g:SuperTabNoCompleteAfter = ['^', '\s',';']
-set completeopt=preview,menuone
 
 "------------------------------------------
 " Window switching
@@ -279,4 +278,6 @@ nmap \c :FufChangeList<CR>
 nmap \l :FufLine<CR>
 nmap \b :FufBuffer<CR>
 
+
+map <F10> :call Pmysql()<CR>
 

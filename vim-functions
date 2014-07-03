@@ -85,14 +85,13 @@ endfunction
 "  Pmysql
 " ----------------------
 function! Pmysql()
-	let loginfirst = "'".getline('1')."' "
-	let loginsecond = "'".getline('2')."' "
-	let loginprev = "'".getline(line('.')-1)."' "
-	let current = getline('.')
-	let current = "'".substitute(current,"\'", "APOSMAKLOTA","g")."'"
-	let l = system("~/.vim/bin/pmysql.pl ".loginfirst.loginsecond.loginprev.current)
-	let e = substitute(l,'\%x00', '\r',"g")
-	call append(".",e)
+	let l:loginfirst = shellescape(getline('1'))
+	let l:loginsecond = shellescape(getline('2'))
+	let l:loginprev = shellescape(getline(line('.')-1))
+    let l:escaped_sql =shellescape(getline('.'))
+	let @" = getline('.')
+    let @r = system("~/.vim/bin/pmysql.pl ".l:loginfirst.' '.l:loginsecond.' '.l:loginprev.' '.l:escaped_sql) 
+    put r
 	return
 endfunction
 
